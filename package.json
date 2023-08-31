@@ -1,0 +1,11 @@
+{
+  "name": "goalkeeper-backend",
+  "version": "1.0.0",
+  "description": "A back-end for goalkeeper front-end",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lasma Poksane",
+  "license": "ISC"
+}
