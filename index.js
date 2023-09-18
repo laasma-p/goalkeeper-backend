@@ -1,17 +1,26 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("./db");
 
 const app = express();
-dotenv.config();
 
 app.use(cors());
 
 app.use(bodyParser.json());
 
 const PORT = process.env.PORT;
+
+app.get("/", async (req, res) => {
+  try {
+    const goals = await db("goals").select("*");
+
+    return res.status(200).json(goals);
+  } catch (error) {
+    console.error("Could not fetch goals:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+});
 
 app.post("/add-a-goal", async (req, res) => {
   try {
