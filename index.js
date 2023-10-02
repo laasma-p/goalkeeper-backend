@@ -25,18 +25,18 @@ app.get("/", async (req, res) => {
 
 app.post("/add-a-goal", async (req, res) => {
   try {
-    const { goalName, category, user_token } = req.body;
+    const { goalName, category } = req.body;
 
     const result = await db("goals").insert({
       goal_name: goalName,
       category: category,
-      user_token: user_token,
     });
 
     return res.status(201).json({
       message: "Goal added successfully.",
     });
   } catch (error) {
+    console.error("Could not add a goal:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 });
