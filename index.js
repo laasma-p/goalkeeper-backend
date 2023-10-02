@@ -25,11 +25,12 @@ app.get("/", async (req, res) => {
 
 app.post("/add-a-goal", async (req, res) => {
   try {
-    const { goalName, category } = req.body;
+    const { goalName, category, user_token } = req.body;
 
     const result = await db("goals").insert({
       goal_name: goalName,
       category: category,
+      user_token: user_token,
     });
 
     return res.status(201).json({
