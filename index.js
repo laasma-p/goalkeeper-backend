@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const db = require("./db");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
+const User = require("./user");
 
 const app = express();
 
@@ -38,6 +39,27 @@ app.post("/add-a-goal", async (req, res) => {
   } catch (error) {
     console.error("Could not add a goal:", error);
     return res.status(500).json({ message: "Internal server error." });
+  }
+});
+
+app.post("/register", async (req, res) => {
+  const { enteredEmail, enteredPassword } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ where: { email: enteredEmail } });
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(enteredPassword, 10);
+    await User.create({ email: enteredEmail, password: hashedPassword });
+
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while registering user" });
   }
 });
 
