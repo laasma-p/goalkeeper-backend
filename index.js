@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
 const User = require("./user");
 
 const app = express();
@@ -60,7 +61,11 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    res.status(200).json({ message: "Login successful" });
+    const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Internal server error" });
