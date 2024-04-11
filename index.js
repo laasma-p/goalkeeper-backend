@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const User = require("./user");
+const Goal = require("./goal");
 
 const app = express();
 
@@ -14,32 +15,30 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT;
 
-app.get("/", async (req, res) => {
+app.get("/goals", async (req, res) => {
   try {
-    const goals = await db("goals").select("*");
+    const goals = await Goal.findAll();
 
-    return res.status(200).json(goals);
+    res.status(200).json(goals);
   } catch (error) {
     console.error("Could not fetch goals:", error);
-    return res.status(500).json({ message: "Internal server error." });
+    res.status(500).json({ message: "Internal server error." });
   }
 });
 
 app.post("/add-a-goal", async (req, res) => {
-  try {
-    const { goalName, category } = req.body;
+  const { goalName, category } = req.body;
 
-    const result = await db("goals").insert({
+  try {
+    const newGoal = await Goal.create({
       goal_name: goalName,
       category: category,
     });
 
-    return res.status(201).json({
-      message: "Goal added successfully.",
-    });
+    res.status(201).json({ message: "Goal added successfully", goal: newGoal });
   } catch (error) {
     console.error("Could not add a goal:", error);
-    return res.status(500).json({ message: "Internal server error." });
+    res.status(500).json({ message: "Internal server error." });
   }
 });
 
