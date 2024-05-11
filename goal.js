@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("./sequelize");
+const User = require("./user");
 
 const Goal = sequelize.define(
   "goal",
@@ -22,10 +23,16 @@ const Goal = sequelize.define(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     timestamps: false,
   }
 );
+
+Goal.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = Goal;
