@@ -33,10 +33,11 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-app.get("/goals", async (req, res) => {
+app.get("/goals", verifyToken, async (req, res) => {
   try {
-    const goals = await Goal.findAll();
+    const userId = req.userId;
 
+    const goals = await Goal.findAll({ where: { user_id: userId } });
     res.status(200).json(goals);
   } catch (error) {
     console.error("Could not fetch goals:", error);
@@ -44,13 +45,15 @@ app.get("/goals", async (req, res) => {
   }
 });
 
-app.post("/add-a-goal", async (req, res) => {
+app.post("/add-a-goal", verifyToken, async (req, res) => {
   const { goalName, category } = req.body;
+  const userId = req.userId;
 
   try {
     const newGoal = await Goal.create({
       goal_name: goalName,
       category: category,
+      user_id: userId,
     });
 
     res.status(201).json({ message: "Goal added successfully", goal: newGoal });
